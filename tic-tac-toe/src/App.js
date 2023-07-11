@@ -1,5 +1,7 @@
+// Importing the 'useState' hook from the 'react' library
 import { useState } from 'react';
 
+// Square component represents a single square in the tic-tac-toe grid
 function Square({ value, onSquareClick }) {
   return (
     <button className="square" onClick={onSquareClick}>
@@ -8,20 +10,27 @@ function Square({ value, onSquareClick }) {
   );
 }
 
+// Board component represents the tic-tac-toe game board
 function Board({ xIsNext, squares, onPlay }) {
+  // Function to handle click on a square
   function handleClick(i) {
+    // Check if there is already a winner or the square is already filled
     if (calculateWinner(squares) || squares[i]) {
       return;
     }
+    // Create a new copy of squares array
     const nextSquares = squares.slice();
+    // Update the square with X or O based on the current player
     if (xIsNext) {
       nextSquares[i] = 'X';
     } else {
       nextSquares[i] = 'O';
     }
+    // Call the onPlay function with the updated squares
     onPlay(nextSquares);
   }
 
+  // Determine the winner based on the current squares
   const winner = calculateWinner(squares);
   let status;
   if (winner) {
@@ -52,22 +61,31 @@ function Board({ xIsNext, squares, onPlay }) {
   );
 }
 
+// Game component represents the tic-tac-toe game
 export default function Game() {
+  // Initialize the game state using the useState hook
   const [history, setHistory] = useState([Array(9).fill(null)]);
   const [currentMove, setCurrentMove] = useState(0);
   const xIsNext = currentMove % 2 === 0;
   const currentSquares = history[currentMove];
 
+  // Function to handle a play in the game
   function handlePlay(nextSquares) {
+    // Create a new history array by appending the new squares to the existing history
     const nextHistory = [...history.slice(0, currentMove + 1), nextSquares];
+    // Update the history state with the new history array
     setHistory(nextHistory);
+    // Update the current move to the last move in the history
     setCurrentMove(nextHistory.length - 1);
   }
 
+  // Function to jump to a specific move in the game
   function jumpTo(nextMove) {
+    // Update the current move to the selected move index
     setCurrentMove(nextMove);
   }
 
+  // Create a list of buttons representing the moves in the game
   const moves = history.map((squares, move) => {
     let description;
     if (move > 0) {
@@ -94,6 +112,7 @@ export default function Game() {
   );
 }
 
+// Function to calculate the winner based on the current squares
 function calculateWinner(squares) {
   const lines = [
     [0, 1, 2],
@@ -105,11 +124,13 @@ function calculateWinner(squares) {
     [0, 4, 8],
     [2, 4, 6],
   ];
+  // Check if any of the winning lines have the same symbol (X or O)
   for (let i = 0; i < lines.length; i++) {
     const [a, b, c] = lines[i];
     if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
       return squares[a];
     }
   }
+  // Return null if there is no winner
   return null;
 }
